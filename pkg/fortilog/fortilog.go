@@ -1,5 +1,10 @@
 // Package fortilog
-// This code was transpiled from the original Python implementation and works with my elog and tlog test files. Still it is nowhere near as clean or optimized as it could and probably should be, and I would only trust the transpiler as far as I can piss on a hot summers day.
+//
+// This code was transpiled from the original Python implementation
+// and works with my elog and tlog test files.
+// Still it is nowhere near as clean or optimized as it could
+// and probably should be, and I would only trust the transpiler
+// as far as I can piss on a hot summers day.
 //
 // Sources:
 // https://cyber.wtf/2024/08/30/parsing-fortinet-binary-firewall-logs/
