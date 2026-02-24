@@ -1,5 +1,5 @@
 // Package fortilog
-// This code was transpiled from the original Python implementation and works with my elog and tlog test files. Still it is nowhere near cleaned or optimized as it could and probably should be, and I would only trust the transpiler as far as I can piss on a hot summers day.
+// This code was transpiled from the original Python implementation and works with my elog and tlog test files. Still it is nowhere near as clean or optimized as it could and probably should be, and I would only trust the transpiler as far as I can piss on a hot summers day.
 //
 // Sources:
 // https://cyber.wtf/2024/08/30/parsing-fortinet-binary-firewall-logs/
@@ -9,6 +9,7 @@ package fortilog
 import (
 	"bytes"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io"
 
@@ -43,12 +44,9 @@ var tlcFields = []string{
 
 func DecodeLLogV5(data []byte, out *bytes.Buffer) error {
 	reader := bytes.NewReader(data)
-	var filePtrPos int64
 	var logEntries int
 
 	for {
-		filePtrPos = reader.Size() - int64(reader.Len())
-
 		// Peek at next 2 bytes to determine type
 		logType := make([]byte, 2)
 		n, err := reader.Read(logType)
@@ -180,7 +178,7 @@ func DecodeLLogV5(data []byte, out *bytes.Buffer) error {
 			_, _ = reader.ReadByte()
 			continue
 		} else {
-			return fmt.Errorf("unknown header %x at offset %d", logType, filePtrPos)
+			return fmt.Errorf("log type not supported: %x", logType)
 		}
 	}
 
@@ -259,7 +257,7 @@ func parseTLC(body []byte) ([]byte, error) {
 			value = int64(binary.BigEndian.Uint64(body[pointer : pointer+8]))
 			pointer += 8
 		} else {
-			return nil, fmt.Errorf("type not supported")
+			return nil, fmt.Errorf("type not supported: %x", typeHigh)
 		}
 
 		fieldName := ""
@@ -277,7 +275,7 @@ func parseTLC(body []byte) ([]byte, error) {
 			decompressed := make([]byte, lUnzipped)
 			lz4Reader := lz4.NewReader(bytes.NewReader(array))
 			n, err := io.ReadFull(lz4Reader, decompressed)
-			if err != nil && err != io.ErrUnexpectedEOF {
+			if err != nil && !errors.Is(err, io.ErrUnexpectedEOF) {
 				return nil, err
 			}
 			return decompressed[:n], nil
