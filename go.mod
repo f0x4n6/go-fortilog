@@ -1,4 +1,4 @@
-module github.com/f0x4n6/go-fortilog
+module go.foxforensics.dev/go-fortilog
 
 go 1.26.0
 
