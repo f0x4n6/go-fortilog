@@ -1,4 +1,4 @@
-module go.foxforensics.dev/go-fortilog
+module go.foxforensics.eu/go-fortilog
 
 go 1.26.0
 
