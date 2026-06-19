@@ -326,6 +326,9 @@ func DecodeTLC(b []byte) ([]byte, error) {
 			if err != nil && !errors.Is(err, io.ErrUnexpectedEOF) {
 				return nil, ErrDataStream
 			}
+			if n != lUnzipped {
+				return nil, ErrDataStream
+			}
 			return decompressed[:n], nil
 		}
 	}
